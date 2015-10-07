@@ -6,4 +6,3 @@ Errors = {
     Errors.collection.insert({message: message, seen: false})
   }
 };
-
