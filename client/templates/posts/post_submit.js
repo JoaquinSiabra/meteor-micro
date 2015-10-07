@@ -1,4 +1,3 @@
-
 Template.postSubmit.onCreated(function() {
   Session.set('postSubmitErrors', {});
 });
@@ -12,7 +11,6 @@ Template.postSubmit.helpers({
   }
 });
 
-
 Template.postSubmit.events({
   'submit form': function(e) {
     e.preventDefault();
@@ -23,17 +21,19 @@ Template.postSubmit.events({
     };
 
     var errors = validatePost(post);
-    if (errors.title || errors.url)  return Session.set('postSubmitErrors', errors);
+    if (errors.title || errors.url)
+      return Session.set('postSubmitErrors', errors);
 
     Meteor.call('postInsert', post, function(error, result) {
+      // display the error to the user and abort
+      if (error)
+        return Errors.throw(error.reason);
 
-      if (error) return throwError(error.reason);
-      if (result.postExists) throwError('This link has already been posted');
+      // show this result but route anyway
+      if (result.postExists)
+        Errors.throw('This link has already been posted');
 
       Router.go('postPage', {_id: result._id});
     });
-
-    //Router.go('postsList');
-
   }
 });
